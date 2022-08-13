@@ -36,7 +36,7 @@ startQuestions = () => {
       },
     ])
     .then((response) => {
-      switch (response.startQ) {
+      switch (response.starterQ) {
         case "View All Employees":
           viewAllEmployees();
           break;
@@ -62,3 +62,39 @@ startQuestions = () => {
       }
     });
 };
+
+viewAllEmployees = () => {
+
+}
+
+addEmployee = () => {
+
+}
+
+viewAllRoles = () => {
+    connection.query(`SELECT d.id, r.title, d.name, r.salary FROM department d JOIN role r ON d.id = r.department_id ORDER BY d.id;`, (err, res) => {
+        if (err) {
+            throw err
+        }
+        console.log('\n---------------------' + res + '\n---------------------')
+        startQuestions()
+    })
+}
+
+addRole = () => {
+
+}
+
+viewAllDepartments = () => {
+    connection.query(`SELECT * FROM department ORDER BY name ASC;`, (err, res) => {
+        if (err) {
+            throw (err)
+        }
+        console.log('\n---------------------' + res + '\n---------------------')
+        startQuestions()
+    })
+}
+
+addDepartment = () => {
+
+}

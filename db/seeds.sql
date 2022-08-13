@@ -3,7 +3,7 @@ VALUES
     ('Sales'),
     ('Engineering'),
     ('Finance'),
-    ('Legal'),;
+    ('Legal');
 
 INSERT INTO role (title, salary, department_id)
 VALUES
@@ -14,22 +14,19 @@ VALUES
     ('Account Manager', 160000, 3),
     ('Accountant', 125000, 3),
     ('Legal Team Lead', 250000, 4),
-    ('Lawyer', 190000, 4),;
-
-INSERT INTO employee (first_name, last_name, role_id)
-VALUES
-    ('Ash', 'Ketchum', 1),
-    ('Leon', 'Kennedy', 3),
-    ('Ken', 'Kaneki', 5),
-    ('Saul', 'Goodman', 7),;
+    ('Lawyer', 190000, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
+    ('Ash', 'Ketchum', 1, NULL),
+    ('Leon', 'Kennedy', 3, NULL),
+    ('Ken', 'Kaneki', 5, NULL),
+    ('Saul', 'Goodman', 7, NULL),
     ('Billy', 'Smath', 2, 1),
-    ('Stanley', 'Yelnats', 2, 1)
-    ('Jimothy', 'Halpert', 4, 3)
-    ('Steve', 'Carell', 4, 3)
-    ('Jake', 'Peralta', 6, 5)
-    ('J.R.R', 'Tolkien', 6, 5)
-    ('Marshal', 'Erikson', 8, 7)
-    ('Nick', 'Starker', 8, 7)
+    ('Stanley', 'Yelnats', 2, 1),
+    ('Jimothy', 'Halpert', 4, 2),
+    ('Steve', 'Carell', 4, 2),
+    ('Jake', 'Peralta', 6, 3),
+    ('J.R.R', 'Tolkien', 6, 3),
+    ('Marshal', 'Erikson', 8, 4),
+    ('Nick', 'Starker', 8, 4);
