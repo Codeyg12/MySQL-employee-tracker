@@ -1,7 +1,8 @@
 SELECT 
-    CONCAT(m.first_name, " ", m.last_name) AS manager_name,
+    e.first_name,
+    e.last_name,
     d.name AS department
-FROM employee m
+FROM employee e
 LEFT JOIN department d
-    ON m.role_id = d.id
-WHERE m.manager_id is NULL
+    ON e.role_id = d.id
+WHERE department is Sales
