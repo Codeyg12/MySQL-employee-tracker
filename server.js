@@ -30,6 +30,7 @@ startQuestions = () => {
           "Add Role",
           "View All Departments",
           "Add Department",
+          "View All Managers",
           "Exit",
         ],
       },
@@ -54,6 +55,10 @@ startQuestions = () => {
         case "Add Department":
           addDepartment();
           break;
+          case "View All Managers":
+            viewAllManagers()
+            break;
+          //New functions here
         default:
           connection.end();
           console.log("Thanks for stopping by");
@@ -205,3 +210,15 @@ addDepartment = () => {
       );
     });
 };
+
+viewAllManagers = () => {
+  connection.query(`SELECT CONCAT(m.first_name, " ", m.last_name) AS manager_name, d.name AS department FROM employee m LEFT JOIN department d ON m.role_id = d.id WHERE m.manager_id is NULL`,
+  (err, res) => {
+    if (err) throw err
+    console.table(
+      "\n------------------------------------------", res, "\n------------------------------------------"
+    );
+    startQuestions();
+  })
+}
+// How does async await work
