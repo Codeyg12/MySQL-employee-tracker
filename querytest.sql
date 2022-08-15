@@ -1,8 +1,11 @@
 SELECT 
     e.first_name,
     e.last_name,
+    r.title,
     d.name AS department
-FROM employee e
-LEFT JOIN department d
-    ON e.role_id = d.id
-WHERE department is Sales
+FROM role r
+JOIN employee e
+    ON e.role_id = r.id
+JOIN department d
+    ON d.id = r.department_id
+WHERE d.id = 'Sales'
