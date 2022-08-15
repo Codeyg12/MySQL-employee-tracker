@@ -32,6 +32,8 @@ startQuestions = () => {
           "Add Department",
           "View All Managers",
           "View By Department",
+          "View Budget By Department",
+          "Delete Department",
           "Exit",
         ],
       },
@@ -59,11 +61,17 @@ startQuestions = () => {
         case "View All Managers":
           viewAllManagers();
           break;
-        //New functions here
-        // TODO All employees by departments
         case "View By Department":
           viewByDepartment();
           break;
+        case "View Budget By Department":
+          departmentBudget();
+          break;
+        case "Delete Department":
+          deleteDepartment();
+          break;
+        //New functions here
+        // TODO All employees by departments
         default:
           connection.end();
           console.log("Thanks for stopping by");
@@ -93,64 +101,65 @@ addEmployee = () => {
         name: employee.first_name + " " + employee.last_name,
         value: employee.id,
       }));
-    inquirer
-      .prompt([
-        {
-          name: "firstName",
-          type: "input",
-          message: "What is the employee's first name?",
-        },
-        {
-          name: "lastName",
-          type: "input",
-          message: "What is the employee's last name?",
-        },
-        {
-          name: "employeeNewRole",
-          type: "list",
-          message: "What is the employee's role",
-          choices: roles,
-        },
-        {
-          name: "employeeNewManager",
-          type: "list",
-          message: "Who is the employee's manager?",
-          choices: employees,
-        },
-      ])
-      .then((response) => {
-        connection.query(
-          `INSERT INTO employee SET ?`,
+      inquirer
+        .prompt([
           {
-            first_name: response.firstName,
-            last_name: response.lastName,
-            role_id: response.employeeNewRole,
-            manager_id: response.employeeNewManager,
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?",
           },
-          (err, res) => {
-            if (err) throw err;
-          }
-        );
-        connection.query(
-          `INSERT INTO role SET ?`,
           {
-            id: response.dept,
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?",
           },
-          (err, res) => {
-            if (err) throw err;
-            console.log(
-              `New employee ${response.firstName} added to the database`
+          {
+            name: "employeeNewRole",
+            type: "list",
+            message: "What is the employee's role",
+            choices: roles,
+          },
+          {
+            name: "employeeNewManager",
+            type: "list",
+            message: "Who is the employee's manager?",
+            choices: employees,
+          },
+        ])
+        .then((response) => {
+          connection.query(
+            `INSERT INTO employee SET ?`,
+            {
+              first_name: response.firstName,
+              last_name: response.lastName,
+              role_id: response.employeeNewRole,
+              manager_id: response.employeeNewManager,
+            },
+            (err, res) => {
+              if (err) throw err;
+            }
+          );
+          connection.query(
+            `INSERT INTO role SET ?`,
+            {
+              id: response.dept,
+            },
+            (err, res) => {
+              if (err) throw err;
+              console.log(
+                `New employee ${response.firstName} added to the database`
               );
               startQuestions();
-            });
-          });
-      });
+            }
+          );
+        });
+    });
   });
 };
 
 viewAllRoles = () => {
   connection.query(
-    `SELECT d.id, r.title, d.name, r.salary FROM department d JOIN role r ON d.id = r.department_id ORDER BY d.id;`,
+    `SELECT r.title, d.name, r.salary FROM department d JOIN role r ON d.id = r.department_id ORDER BY d.id;`,
     (err, res) => {
       if (err) throw err;
       console.table("\n", res);
@@ -276,4 +285,63 @@ viewByDepartment = () => {
       });
   });
 };
+
+departmentBudget = () => {
+  connection.query(`SELECT * FROM department`, (err, res) => {
+    if (err) throw err;
+    let departments = res.map((department) => ({
+      name: department.name,
+      value: department.id,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "deptSelect",
+          type: "list",
+          message: "Which department's budget would you like to view?",
+          choices: departments,
+        },
+      ])
+      .then((response) => {
+        connection.query(
+          `SELECT d.name as department, SUM(r.salary) as total_salary FROM role r JOIN employee e ON e.role_id = r.id JOIN department d ON d.id = r.department_id WHERE d.id = ${response.deptSelect}`,
+          (err, res) => {
+            if (err) throw err;
+            console.table("\n", res);
+            startQuestions();
+          }
+        );
+      });
+  });
+};
+
+deleteDepartment = () => {
+  connection.query(`SELECT * FROM department`, (err, res) => {
+    if (err) throw err;
+    let departments = res.map((department) => ({
+      name: department.name,
+      value: department.id,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "deptDelete",
+          type: "list",
+          message: "Which department would you like to delete?",
+          choices: departments,
+        },
+      ])
+      .then((response) => {
+        connection.query(
+          `DELETE FROM department WHERE id = ${response.deptDelete}`,
+          (err, res) => {
+            if (err) throw err;
+            console.log(`Successfully deleted department from database`);
+            startQuestions();
+          }
+        );
+      });
+  });
+};
+//TODO at least delete role and employee
 // How does async await work
