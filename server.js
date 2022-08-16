@@ -34,6 +34,8 @@ startQuestions = () => {
           "View By Department",
           "View Budget By Department",
           "Delete Department",
+          "Delete Role",
+          "Update Role",
           "Exit",
         ],
       },
@@ -70,6 +72,12 @@ startQuestions = () => {
         case "Delete Department":
           deleteDepartment();
           break;
+          case "Delete Role":
+            deleteRole()
+            break;
+            case "Update Role":
+              updateRole()
+              break;
         //New functions here
         // TODO All employees by departments
         default:
@@ -82,7 +90,7 @@ startQuestions = () => {
 
 viewAllEmployees = () => {
   connection.query(
-    `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id JOIN role r ON e.role_id = r.id JOIN department d on d.id = r.department_id ORDER BY e.id;`,
+    `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id JOIN role r ON e.role_id = r.id JOIN department d on d.id = r.department_id ORDER BY d.name;`,
     (err, res) => {
       if (err) throw err;
       console.table("\n", res);
@@ -343,5 +351,79 @@ deleteDepartment = () => {
       });
   });
 };
-//TODO at least delete role and employee
-// How does async await work
+
+deleteRole = () => {
+  connection.query(`SELECT * FROM role`, (err, res) => {
+    if (err) throw err
+    let roles = res.map(role => ({ name: role.title, value: role.id }))
+    inquirer.prompt([
+      {
+        name: 'roleSelect',
+        type: 'list',
+        message: 'Which role would you like to remove?',
+        choices: roles,
+      },
+    ])
+    .then((response) => {
+      connection.query(`DELETE FROM role WHERE id = ${response.roleSelect}`, (err, res) => {
+        if (err) throw err
+        console.log('The role has successfuly been removed from the database')
+        startQuestions()
+      })
+    })
+  })
+}
+
+deleteEmployee = () => {
+  connection.query(`SELECT * FROM employee`, (err, res) => {
+    if (err) throw err
+    let employees = res.map(employee => ({ name: employee.first_name + ' ' + employee.last_name, value: employee.id}))
+    inquirer.prompt([
+      {
+        name: 'employeeSelect',
+        type: 'list',
+        message: 'Which employee would you like to remove?',
+        choices: employees,
+      },
+    ])
+    .then((response) => {
+      connection.query(`DELETE FROM employee WHERE id = ${response.employeeSelect}`, (err, res) => {
+        if (err) throw err
+        console.log('Employee successfully removed from the database')
+        startQuestions()
+      })
+    })
+  })
+}
+
+updateRole = () => {
+  connection.query(`SELECT * FROM employee`, (err, res) => {
+    if (err) throw err
+    let employees = res.map(employee => ({ name: employee.first_name + " " + employee.last_name, value: employee.id}))
+    connection.query(`SELECT * FROM role`, (err, res) => {
+      if (err) throw err
+      let roles = res.map(role => ({ name: role.title, value: role.id }))
+      inquirer.prompt([
+        {
+          name: 'employeeSelect',
+          type: 'list',
+          message: 'Which employee would you like to change the role of?',
+          choices: employees,
+        },
+        {
+          name: 'roleSelect',
+          type: 'list',
+          message: 'What is their updated role?',
+          choices: roles,
+        },
+      ])
+      .then((response) => {
+        connection.query(`UPDATE employee SET employee.role_id = ${response.roleSelect} WHERE employee.id = ${response.employeeSelect}`, (err, res) => {
+          if (err) throw err
+          console.log('\nEmployee role has been updated in database\n')
+          startQuestions()
+        })
+      })
+    })
+  })
+}
