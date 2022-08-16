@@ -1,7 +1,9 @@
+// All needed packages
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 require("console.table");
 
+// Sets the connection
 const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -10,9 +12,12 @@ const connection = mysql.createConnection({
   database: "company_db",
 });
 
+// Informs the user it's working and generates questions
 connection.connect((err) => {
   if (err) throw err;
-  console.log(`Now connected as ${connection.threadId}`);
+  console.log(
+    `\nNow connected as ${connection.threadId}\nWelcome to the company database\n`
+  );
   startQuestions();
 });
 
@@ -24,22 +29,24 @@ startQuestions = () => {
         name: "starterQ",
         message: "What would you like to do?",
         choices: [
-          "View All Employees",
-          "Add Employee",
-          "View All Roles",
-          "Add Role",
           "View All Departments",
-          "Add Department",
+          "View All Roles",
           "View All Managers",
-          "View By Department",
-          "View Budget By Department",
+          "View All Employees",
+          "Add Department",
+          "Add Role",
+          "Add Employee",
+          "Update Employee Role",
           "Delete Department",
           "Delete Role",
-          "Update Role",
+          "Delete Employee",
+          "View Employees By Department",
+          "View Budget By Department",
           "Exit",
         ],
       },
     ])
+    // Switch case to grab whichever function the user selected
     .then((response) => {
       switch (response.starterQ) {
         case "View All Employees":
@@ -63,7 +70,7 @@ startQuestions = () => {
         case "View All Managers":
           viewAllManagers();
           break;
-        case "View By Department":
+        case "View Employees By Department":
           viewByDepartment();
           break;
         case "View Budget By Department":
@@ -72,38 +79,44 @@ startQuestions = () => {
         case "Delete Department":
           deleteDepartment();
           break;
-          case "Delete Role":
-            deleteRole()
-            break;
-            case "Update Role":
-              updateRole()
-              break;
-        //New functions here
-        // TODO All employees by departments
+        case "Delete Role":
+          deleteRole();
+          break;
+        case "Delete Employee":
+          deleteEmployee();
+          break;
+        case "Update Employee Role":
+          updateRole();
+          break;
         default:
           connection.end();
-          console.log("Thanks for stopping by");
+          console.log("\nThanks for stopping by");
           break;
       }
     });
 };
 
 viewAllEmployees = () => {
+  // All connection.queries make it possible to manipulate the database
   connection.query(
-    `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id JOIN role r ON e.role_id = r.id JOIN department d on d.id = r.department_id ORDER BY d.name;`,
+    `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) manager FROM employee e LEFT JOIN employee m ON m.id = e.manager_id JOIN role r ON e.role_id = r.id JOIN department d on d.id = r.department_id ORDER BY d.name`,
     (err, res) => {
+      // Stops the function if theres an error and informs the user
       if (err) throw err;
+      // Console.table puts the query in a table format
       console.table("\n", res);
+      // This will be at the end of all and resets the questions
       startQuestions();
     }
   );
 };
 
 addEmployee = () => {
-  connection.query(`SELECT * FROM role;`, (err, res) => {
+  connection.query(`SELECT * FROM role`, (err, res) => {
     if (err) throw err;
+    // Maps out all roles so the list of roles updates
     let roles = res.map((role) => ({ name: role.title, value: role.id }));
-    connection.query(`SELECT * FROM employee;`, (err, res) => {
+    connection.query(`SELECT * FROM employee`, (err, res) => {
       if (err) throw err;
       let employees = res.map((employee) => ({
         name: employee.first_name + " " + employee.last_name,
@@ -136,13 +149,7 @@ addEmployee = () => {
         ])
         .then((response) => {
           connection.query(
-            `INSERT INTO employee SET ?`,
-            {
-              first_name: response.firstName,
-              last_name: response.lastName,
-              role_id: response.employeeNewRole,
-              manager_id: response.employeeNewManager,
-            },
+            `INSERT INTO employee SET first_name = "${response.firstName}", last_name = "${response.lastName}", role_id = "${response.employeeNewRole}", manager_id = "${response.employeeNewManager}"`,
             (err, res) => {
               if (err) throw err;
             }
@@ -155,7 +162,7 @@ addEmployee = () => {
             (err, res) => {
               if (err) throw err;
               console.log(
-                `New employee ${response.firstName} added to the database`
+                `\nNew employee ${response.firstName} added to the database\n`
               );
               startQuestions();
             }
@@ -167,7 +174,7 @@ addEmployee = () => {
 
 viewAllRoles = () => {
   connection.query(
-    `SELECT r.title, d.name, r.salary FROM department d JOIN role r ON d.id = r.department_id ORDER BY d.id;`,
+    `SELECT r.title, d.name, r.salary FROM department d JOIN role r ON d.id = r.department_id ORDER BY d.id`,
     (err, res) => {
       if (err) throw err;
       console.table("\n", res);
@@ -177,7 +184,7 @@ viewAllRoles = () => {
 };
 
 addRole = () => {
-  connection.query(`SELECT * FROM department;`, (err, res) => {
+  connection.query(`SELECT * FROM department`, (err, res) => {
     if (err) throw err;
     let departments = res.map((dept) => ({ name: dept.name, value: dept.id }));
     inquirer
@@ -201,15 +208,10 @@ addRole = () => {
       ])
       .then((response) => {
         connection.query(
-          `INSERT INTO role SET ?`,
-          {
-            title: response.newRole,
-            salary: response.newSalary,
-            department_id: response.newRoleDept,
-          },
+          `INSERT INTO role SET title = "${response.newRole}", salary = "${response.newSalary}", department_id = "${response.newRoleDept}" `,
           (err, res) => {
             if (err) throw err;
-            console.log(`\n ${response.newRole} added to role table!`);
+            console.log(`\n ${response.newRole} added to role table!\n`);
             startQuestions();
           }
         );
@@ -218,14 +220,11 @@ addRole = () => {
 };
 
 viewAllDepartments = () => {
-  connection.query(
-    `SELECT * FROM department ORDER BY name ASC;`,
-    (err, res) => {
-      if (err) throw err;
-      console.table("\n", res);
-      startQuestions();
-    }
-  );
+  connection.query(`SELECT * FROM department ORDER BY name ASC`, (err, res) => {
+    if (err) throw err;
+    console.table("\n", res);
+    startQuestions();
+  });
 };
 
 addDepartment = () => {
@@ -239,14 +238,11 @@ addDepartment = () => {
     ])
     .then((response) => {
       connection.query(
-        `INSERT INTO department SET ?`,
-        {
-          name: response.newDepartment,
-        },
+        `INSERT INTO department SET name = "${response.newDepartment}"`,
         (err, res) => {
           if (err) throw err;
           console.log(
-            `\n ${response.newDepartment} added to department table!`
+            `\n ${response.newDepartment} added to department table!\n`
           );
           startQuestions();
         }
@@ -344,7 +340,7 @@ deleteDepartment = () => {
           `DELETE FROM department WHERE id = ${response.deptDelete}`,
           (err, res) => {
             if (err) throw err;
-            console.log(`Successfully deleted department from database`);
+            console.log(`\nSuccessfully deleted department from database\n`);
             startQuestions();
           }
         );
@@ -354,76 +350,96 @@ deleteDepartment = () => {
 
 deleteRole = () => {
   connection.query(`SELECT * FROM role`, (err, res) => {
-    if (err) throw err
-    let roles = res.map(role => ({ name: role.title, value: role.id }))
-    inquirer.prompt([
-      {
-        name: 'roleSelect',
-        type: 'list',
-        message: 'Which role would you like to remove?',
-        choices: roles,
-      },
-    ])
-    .then((response) => {
-      connection.query(`DELETE FROM role WHERE id = ${response.roleSelect}`, (err, res) => {
-        if (err) throw err
-        console.log('The role has successfuly been removed from the database')
-        startQuestions()
-      })
-    })
-  })
-}
-
-deleteEmployee = () => {
-  connection.query(`SELECT * FROM employee`, (err, res) => {
-    if (err) throw err
-    let employees = res.map(employee => ({ name: employee.first_name + ' ' + employee.last_name, value: employee.id}))
-    inquirer.prompt([
-      {
-        name: 'employeeSelect',
-        type: 'list',
-        message: 'Which employee would you like to remove?',
-        choices: employees,
-      },
-    ])
-    .then((response) => {
-      connection.query(`DELETE FROM employee WHERE id = ${response.employeeSelect}`, (err, res) => {
-        if (err) throw err
-        console.log('Employee successfully removed from the database')
-        startQuestions()
-      })
-    })
-  })
-}
-
-updateRole = () => {
-  connection.query(`SELECT * FROM employee`, (err, res) => {
-    if (err) throw err
-    let employees = res.map(employee => ({ name: employee.first_name + " " + employee.last_name, value: employee.id}))
-    connection.query(`SELECT * FROM role`, (err, res) => {
-      if (err) throw err
-      let roles = res.map(role => ({ name: role.title, value: role.id }))
-      inquirer.prompt([
+    if (err) throw err;
+    let roles = res.map((role) => ({ name: role.title, value: role.id }));
+    inquirer
+      .prompt([
         {
-          name: 'employeeSelect',
-          type: 'list',
-          message: 'Which employee would you like to change the role of?',
-          choices: employees,
-        },
-        {
-          name: 'roleSelect',
-          type: 'list',
-          message: 'What is their updated role?',
+          name: "roleSelect",
+          type: "list",
+          message: "Which role would you like to remove?",
           choices: roles,
         },
       ])
       .then((response) => {
-        connection.query(`UPDATE employee SET employee.role_id = ${response.roleSelect} WHERE employee.id = ${response.employeeSelect}`, (err, res) => {
-          if (err) throw err
-          console.log('\nEmployee role has been updated in database\n')
-          startQuestions()
-        })
-      })
-    })
-  })
-}
+        connection.query(
+          `DELETE FROM role WHERE id = ${response.roleSelect}`,
+          (err, res) => {
+            if (err) throw err;
+            console.log(
+              "\nThe role has successfuly been removed from the database\n"
+            );
+            startQuestions();
+          }
+        );
+      });
+  });
+};
+
+deleteEmployee = () => {
+  connection.query(`SELECT * FROM employee`, (err, res) => {
+    if (err) throw err;
+    let employees = res.map((employee) => ({
+      name: employee.first_name + " " + employee.last_name,
+      value: employee.id,
+    }));
+    inquirer
+      .prompt([
+        {
+          name: "employeeSelect",
+          type: "list",
+          message: "Which employee would you like to remove?",
+          choices: employees,
+        },
+      ])
+      .then((response) => {
+        connection.query(
+          `DELETE FROM employee WHERE id = ${response.employeeSelect}`,
+          (err, res) => {
+            if (err) throw err;
+            console.log("\nEmployee successfully removed from the database\n");
+            startQuestions();
+          }
+        );
+      });
+  });
+};
+
+updateRole = () => {
+  connection.query(`SELECT * FROM employee`, (err, res) => {
+    if (err) throw err;
+    let employees = res.map((employee) => ({
+      name: employee.first_name + " " + employee.last_name,
+      value: employee.id,
+    }));
+    connection.query(`SELECT * FROM role`, (err, res) => {
+      if (err) throw err;
+      let roles = res.map((role) => ({ name: role.title, value: role.id }));
+      inquirer
+        .prompt([
+          {
+            name: "employeeSelect",
+            type: "list",
+            message: "Which employee would you like to change the role of?",
+            choices: employees,
+          },
+          {
+            name: "roleSelect",
+            type: "list",
+            message: "What is their updated role?",
+            choices: roles,
+          },
+        ])
+        .then((response) => {
+          connection.query(
+            `UPDATE employee SET employee.role_id = ${response.roleSelect} WHERE employee.id = ${response.employeeSelect}`,
+            (err, res) => {
+              if (err) throw err;
+              console.log("\nEmployee role has been updated in database\n");
+              startQuestions();
+            }
+          );
+        });
+    });
+  });
+};
