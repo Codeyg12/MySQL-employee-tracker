@@ -16,9 +16,12 @@
   
   [License](#license)
 
-  ### Walkthrough Video
+  ### Demo Media
 
-  To see the app in action click [here]()
+  To see the app in action click [here](https://drive.google.com/file/d/146Tm47Vuk9i1XhDXDfVfXm2nUeoxAy_4/view)
+ 
+  Screenshot from running app ![et](https://user-images.githubusercontent.com/103782398/185019926-270d697f-0a98-401c-a438-5f9254420871.png)
+
 
   ### Description
 

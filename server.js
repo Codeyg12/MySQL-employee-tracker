@@ -37,9 +37,9 @@ startQuestions = () => {
           "Add Role",
           "Add Employee",
           "Update Employee Role",
-          "Delete Department",
-          "Delete Role",
           "Delete Employee",
+          "Delete Role",
+          "Delete Department",
           "View Employees By Department",
           "View Budget By Department",
           "Exit",
@@ -152,15 +152,6 @@ addEmployee = () => {
             `INSERT INTO employee SET first_name = "${response.firstName}", last_name = "${response.lastName}", role_id = "${response.employeeNewRole}", manager_id = "${response.employeeNewManager}"`,
             (err, res) => {
               if (err) throw err;
-            }
-          );
-          connection.query(
-            `INSERT INTO role SET ?`,
-            {
-              id: response.dept,
-            },
-            (err, res) => {
-              if (err) throw err;
               console.log(
                 `\nNew employee ${response.firstName} added to the database\n`
               );
@@ -252,7 +243,7 @@ addDepartment = () => {
 
 viewAllManagers = () => {
   connection.query(
-    `SELECT CONCAT(m.first_name, " ", m.last_name) AS manager_name, d.name AS department FROM employee m LEFT JOIN department d ON m.role_id = d.id WHERE m.manager_id is NULL`,
+    `SELECT CONCAT(m.first_name, " ", m.last_name) AS manager_name, d.name AS department FROM employee m JOIN role r ON m.role_id = r.id LEFT JOIN department d ON r.department_id = d.id WHERE m.manager_id is NULL`,
     (err, res) => {
       if (err) throw err;
       console.table("\n", res);
