@@ -1,3 +1,4 @@
+<a name="readme-top"></a>
 # MySQL-employee-tracker
 
 ## License
@@ -25,6 +26,8 @@
 ### Description
 
 Creating a content management system (CMS) for a non developer to interact with information stored in a database, in this case a company and its employees. Node, Inquirer and MySQL were used for this as well as console.table. This project was a ton of fun to do, testing all the different ways to query was very interesting.
+
+<p align="right"><a href="#readme-top">Return to start</a></p>
 
 ### Demo
 
