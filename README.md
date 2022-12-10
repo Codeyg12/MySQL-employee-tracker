@@ -1,9 +1,6 @@
 <a name="readme-top"></a>
-# MySQL-employee-tracker
 
-## License
-
-![License](https://img.shields.io/badge/license-MIT-00beef)
+# MySQL-employee-tracker [<img align="right" src="https://img.shields.io/badge/license-MIT-00beef"></img>](LICENSE)
 
 ## Table of Contents
 
@@ -20,8 +17,6 @@
 [Contribution](#contribution)
 
 [Testing](#test)
-
-[License](#license)
 
 ### Description
 
@@ -41,23 +36,26 @@ Screenshot from running app ![et](https://user-images.githubusercontent.com/1037
 
 To install follow these steps.
 
-1. Clone the repo using either HTTPS 
+1. Clone the repo using either HTTPS
+
 ```sh
 https://github.com/Codeyg12/MySQL-employee-tracker.git
 ```
 
-  or SSH
+or SSH
 
-```sh 
+```sh
 git@github.com:Codeyg12/MySQL-employee-tracker.git
 ```
 
 2. Install node packages
+
 ```sh
-npm i 
+npm i
 ```
 
 3. Start the app
+
 ```sh
 npm start
 ```
@@ -73,10 +71,11 @@ To manage a company's database of the employees, whether its viewing, deleting o
 ### Technologies
 
 Below are the languages and frameworks/libraries used
-* ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
-* ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
-* ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
-* ![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white)
+
+- ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+- ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
+- ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+- ![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white)
 
 <p align="right"><a href="#readme-top">(Return to top)</a></p>
 
