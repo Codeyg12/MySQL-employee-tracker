@@ -20,7 +20,7 @@
 
 ### Description
 
-Creating a content management system (CMS) for a non developer to interact with information stored in a database, in this case a company and its employees. Node, Inquirer and MySQL were used for this as well as console.table. This project was a ton of fun to do, testing all the different ways to query was very interesting.
+Creating a content management system (CMS) for a non-developer to interact with information stored in a database, in this case, a company and its employees. Node, Inquirer, and MySQL were used for this as well as console.table. This project was a ton of fun to do, testing all the different ways to query was very interesting.
 
 <p align="right"><a href="#readme-top">(Return to top)</a></p>
 
@@ -38,33 +38,32 @@ To install follow these steps.
 
 1. Clone the repo using either HTTPS
 
-```sh
+```
 https://github.com/Codeyg12/MySQL-employee-tracker.git
 ```
 
 or SSH
 
-```sh
+```
 git@github.com:Codeyg12/MySQL-employee-tracker.git
 ```
 
 2. Install node packages
 
-```sh
-npm i
 ```
-
-3. Start the app
-
-```sh
-npm start
+npm i
 ```
 
 <p align="right"><a href="#readme-top">(Return to top)</a></p>
 
 ### Usage
 
-To manage a company's database of the employees, whether its viewing, deleting or adding employees, roles and departments
+1. Follow the installation steps above
+2. Start the app
+
+```
+npm start
+```
 
 <p align="right"><a href="#readme-top">(Return to top)</a></p>
 
@@ -93,6 +92,6 @@ npm test
 
 #### Links
 
-To see more of my work check my [Github](https://github.com/Codeyg12). For futher questions you can reach me at codey.gallup@gmail.com.
+To see more of my work check my [Github](https://github.com/Codeyg12). For further questions, you can reach me at codey.gallup@gmail.com.
 
 <p align="right"><a href="#readme-top">(Return to top)</a></p>
